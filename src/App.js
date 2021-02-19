@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Helmet from 'react-helmet'
 import styles from './App.module.css'
 import Wrapper from './components/Layout/Wrapper'
 import Input from './components/Form/Input/Input'
@@ -247,6 +248,14 @@ function App() {
 
 	return (
 		<main className={styles.home}>
+			<Helmet>
+				<meta charSet='utf-8' />
+				<title>JDS-FE-CASE1 | IDA BAGUS WEDAGAMA</title>
+				<meta
+					name='description'
+					content='Studi Case 1 Jabar Digital Service oleh Ida Bagus Wedagama'
+				/>
+			</Helmet>
 			{loading ? <Loading /> : ''}
 			<header className={styles.header}>
 				<Wrapper>
