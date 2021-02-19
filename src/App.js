@@ -7,6 +7,7 @@ import Select from './components/Form/Input/Select'
 import LabeledInput from './components/Form/Input/LabeledInput'
 import Checkbox from './components/Form/Input/Checkbox'
 import Button from './components/Button/Button'
+import Loading from './components/Loading/Loading'
 
 function App() {
 	const [userData, setUserData] = useState({
@@ -68,9 +69,9 @@ function App() {
 
 	const [pernyataan, setPernyataan] = useState(false)
 
-	const [dataIsValid, setDataIsValid] = useState(false)
-
 	const [alasanLainnya, setAlasanLainnya] = useState('')
+
+	const [loading, setLoading] = useState(false)
 
 	const handleUserInput = (e) => {
 		let key = e.target.name
@@ -83,6 +84,7 @@ function App() {
 					...userData,
 					[key]: {
 						...userData[key],
+						value: '',
 						limit: true,
 					},
 				})
@@ -91,10 +93,11 @@ function App() {
 					...userData,
 					[key]: {
 						...userData[key],
-						value: newValue,
+						value: e.target.files[0],
 						limit: false,
 					},
 				})
+				console.log(userData.fotoKTP.value)
 			}
 		} else {
 			setUserData({
@@ -112,19 +115,45 @@ function App() {
 	}
 
 	const setAlasan = (e) => {
-		setAlasanLainnya(e.target.value)
-		setUserData((prevState) => ({
-			...prevState,
-			[e.target.name]: e.target.value,
-		}))
+		const newData = e.target.value
+		setAlasanLainnya(newData)
+		handleUserInput(e)
 	}
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
-		validateForm()
-		if (dataIsValid) {
+		const dataIsValid = validateForm()
+		const rate = Math.random()
+		if (dataIsValid && pernyataan) {
+			setLoading(true)
+			setTimeout(() => {
+				if (rate > 0.5) {
+					setLoading(false)
+					alert('Berhasil Submit Data!')
+					console.log(`
+					Nama : ${userData.nama.value}
+					NIK : ${userData.nik.value}
+					Foto KTP : ${userData.fotoKTP.value.name}
+					Foto KK : ${userData.fotoKK.value.name}
+					Umur : ${userData.umur.value}
+					Jenis Kelamin : ${userData.jenisKelamin.value}
+					Alamat : ${userData.alamat.value}
+					RT : ${userData.rt.value}
+					RW : ${userData.rw.value}
+					Penghasilan Sebelum Pandemi : ${userData.penghasilanBefore.value}
+					Penghasilan Setelah Pandemi : ${userData.penghasilanAfter.value}
+					Alasan : ${userData.alasan.value}
+					`)
+					handleResetForm()
+				} else {
+					setLoading(false)
+					alert('Internal Server Error')
+				}
+			}, 1500)
 		} else {
-			alert('Data belum lengkap! Silahkan mengisi kembali form yang kosong.')
+			alert(
+				'Data belum lengkap! Silahkan mengisi kembali form yang kosong dan mencentang pernyataan.'
+			)
 		}
 	}
 
@@ -132,71 +161,61 @@ function App() {
 		setUserData({
 			nama: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
 			nik: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
 			nomorKK: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
 			fotoKTP: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
+				limit: false,
 			},
 			fotoKK: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
+				limit: false,
 			},
 			umur: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
 			jenisKelamin: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
 			alamat: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
 			rt: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
 			rw: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
 			penghasilanBefore: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
 			penghasilanAfter: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
 			alasan: {
 				value: '',
-				validate: false,
-				touched: false,
+				warning: false,
 			},
-			pernyataan: false,
 		})
+		setPernyataan(false)
+		setAlasanLainnya('')
 	}
 
 	const validateForm = () => {
@@ -222,11 +241,13 @@ function App() {
 				return (isValid = isValid && true)
 			}
 		})
-		setDataIsValid(isValid)
+
+		return isValid
 	}
 
 	return (
 		<main className={styles.home}>
+			{loading ? <Loading /> : ''}
 			<header className={styles.header}>
 				<Wrapper>
 					<h1 className={styles.title}>Form Bantuan Covid-19</h1>
@@ -275,7 +296,6 @@ function App() {
 							type='file'
 							id='fotoKTP'
 							name='fotoKTP'
-							value={userData.fotoKTP.value}
 							onChange={handleUserInput}
 							accept='image/png, image/jpeg, image/jpg, image/bnp'
 							warning={userData.fotoKTP.warning}
@@ -287,7 +307,6 @@ function App() {
 							type='file'
 							id='fotoKK'
 							name='fotoKK'
-							value={userData.fotoKK.value}
 							onChange={handleUserInput}
 							accept='image/png, image/jpeg, image/jpg, image/bnp'
 							warning={userData.fotoKK.warning}
@@ -307,6 +326,7 @@ function App() {
 						/>
 						{/* Field Jenis Kelamin */}
 						<Select
+							label='Jenis Kelamin'
 							name='jenisKelamin'
 							id='jenisKelamin'
 							placeholder='Masukkan jenis kelamin anda'
@@ -426,7 +446,7 @@ function App() {
 										value={alasanLainnya}
 										name='alasan'
 										type='radio'
-										onChange={handleUserInput}
+										onChange={setAlasan}
 									/>
 									<div className={styles.group}>
 										<label htmlFor='alasan4'>Lainnya :</label>

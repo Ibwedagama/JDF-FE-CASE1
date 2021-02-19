@@ -26,7 +26,7 @@ const Select = ({
 					{defaultValue}
 				</option>
 				{selectOptions.map((opt) => (
-					<option key={opt.label} value={opt.value}>
+					<option key={opt.label} value={opt.value} onChange={onChange}>
 						{opt.label}
 					</option>
 				))}

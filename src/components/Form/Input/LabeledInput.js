@@ -26,12 +26,12 @@ const LabeledInput = ({
 					placeholder={placeholder}
 					style={warning ? { border: '1px solid red' } : {}}
 				/>
-				{warning ? (
-					<p style={{ color: 'red', padding: '0', margin: '0' }}>Data tidak boleh kosong</p>
-				) : (
-					''
-				)}
 			</div>
+			{warning ? (
+				<p style={{ color: 'red', padding: '0', margin: '0' }}>Data tidak boleh kosong</p>
+			) : (
+				''
+			)}
 		</div>
 	)
 }
