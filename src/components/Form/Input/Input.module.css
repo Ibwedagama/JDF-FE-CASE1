@@ -123,3 +123,8 @@ textarea {
 .checkbox label {
 	font-size: 1.1rem;
 }
+
+.inlineAlert {
+	display: flex;
+	justify-content: space-between;
+}

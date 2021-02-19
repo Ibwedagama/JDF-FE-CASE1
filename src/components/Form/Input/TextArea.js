@@ -12,6 +12,7 @@ const TextArea = ({
 	placeholder,
 	maxLength = '255',
 	inputLabel,
+	warning,
 }) => {
 	return (
 		<div className={styles.formGroup}>
@@ -25,8 +26,16 @@ const TextArea = ({
 				placeholder={placeholder}
 				value={value}
 				maxLength={maxLength}
+				style={warning ? { border: '1px solid red' } : {}}
 			></textarea>
-			<p style={{ margin: '0', marginTop: '8px' }}>{inputLabel}</p>
+			<div className={styles.inlineAlert}>
+				{warning ? (
+					<p style={{ color: 'red', padding: '0', margin: '0' }}>Data tidak boleh kosong</p>
+				) : (
+					''
+				)}
+				<p style={{ margin: '0' }}>{inputLabel}</p>
+			</div>
 		</div>
 	)
 }

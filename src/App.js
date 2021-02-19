@@ -12,68 +12,57 @@ function App() {
 	const [userData, setUserData] = useState({
 		nama: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 		nik: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 		nomorKK: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 		fotoKTP: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
+			limit: false,
 		},
 		fotoKK: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
+			limit: false,
 		},
 		umur: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 		jenisKelamin: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 		alamat: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 		rt: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 		rw: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 		penghasilanBefore: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 		penghasilanAfter: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 		alasan: {
 			value: '',
-			validate: false,
-			touched: false,
+			warning: false,
 		},
 	})
 
@@ -85,14 +74,37 @@ function App() {
 
 	const handleUserInput = (e) => {
 		let key = e.target.name
-		setUserData((prevState) => ({
-			...prevState,
-			[key]: {
-				...prevState[key],
-				value: e.target.value,
-				touched: true,
-			},
-		}))
+		let newValue = e.target.value
+
+		if (e.target.files) {
+			const file = Math.round(e.target.files[0].size / 1024)
+			if (file > 2000) {
+				setUserData({
+					...userData,
+					[key]: {
+						...userData[key],
+						limit: true,
+					},
+				})
+			} else {
+				setUserData({
+					...userData,
+					[key]: {
+						...userData[key],
+						value: newValue,
+						limit: false,
+					},
+				})
+			}
+		} else {
+			setUserData({
+				...userData,
+				[key]: {
+					...userData[key],
+					value: newValue,
+				},
+			})
+		}
 	}
 
 	const handlePernyataan = (e) => {
@@ -109,6 +121,11 @@ function App() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
+		validateForm()
+		if (dataIsValid) {
+		} else {
+			alert('Data belum lengkap! Silahkan mengisi kembali form yang kosong.')
+		}
 	}
 
 	const handleResetForm = () => {
@@ -183,17 +200,29 @@ function App() {
 	}
 
 	const validateForm = () => {
-		userData.forEach((data) => {
-			if (data.value !== '') {
+		let isValid = true
+		Object.keys(userData).map(function (data) {
+			if (userData[data].value.length === 0) {
 				setUserData((prevState) => ({
 					...prevState,
 					[data]: {
 						...prevState[data],
-						validate: true,
+						warning: true,
 					},
 				}))
+				return (isValid = isValid && false)
+			} else {
+				setUserData((prevState) => ({
+					...prevState,
+					[data]: {
+						...prevState[data],
+						warning: false,
+					},
+				}))
+				return (isValid = isValid && true)
 			}
 		})
+		setDataIsValid(isValid)
 	}
 
 	return (
@@ -206,7 +235,7 @@ function App() {
 			</header>
 			<section className={styles.container}>
 				<Wrapper>
-					<form onSubmit={validateForm} className={styles.inputForm}>
+					<form onSubmit={handleSubmit} className={styles.inputForm}>
 						{/* Field Nama */}
 						<Input
 							label='Nama'
@@ -216,6 +245,7 @@ function App() {
 							value={userData.nama.value}
 							onChange={handleUserInput}
 							placeholder='Masukkan nama anda...'
+							warning={userData.nama.warning}
 						/>
 						{/* Field NIK */}
 						<Input
@@ -226,6 +256,7 @@ function App() {
 							value={userData.nik.value}
 							onChange={handleUserInput}
 							placeholder='Masukkan nomor KTP anda...'
+							warning={userData.nik.warning}
 						/>
 						{/* Field Nomor Kartu Keluarga */}
 						<Input
@@ -236,6 +267,7 @@ function App() {
 							value={userData.nomorKK.value}
 							onChange={handleUserInput}
 							placeholder='Masukkan nomor kartu keluarga anda...'
+							warning={userData.nomorKK.warning}
 						/>
 						{/* Field Foto KTP */}
 						<Input
@@ -246,6 +278,8 @@ function App() {
 							value={userData.fotoKTP.value}
 							onChange={handleUserInput}
 							accept='image/png, image/jpeg, image/jpg, image/bnp'
+							warning={userData.fotoKTP.warning}
+							limit={userData.fotoKTP.limit}
 						/>
 						{/* Field Foto Kartu Keluarga */}
 						<Input
@@ -256,6 +290,8 @@ function App() {
 							value={userData.fotoKK.value}
 							onChange={handleUserInput}
 							accept='image/png, image/jpeg, image/jpg, image/bnp'
+							warning={userData.fotoKK.warning}
+							limit={userData.fotoKK.limit}
 						/>
 						{/* Field Umur */}
 						<Input
@@ -267,6 +303,7 @@ function App() {
 							onChange={handleUserInput}
 							inputLabel='Tahun'
 							placeholder='Masukkan umur anda...'
+							warning={userData.umur.warning}
 						/>
 						{/* Field Jenis Kelamin */}
 						<Select
@@ -279,6 +316,7 @@ function App() {
 								{ label: 'Laki - laki', value: 'Laki-laki' },
 								{ label: 'Perempuan', value: 'Perempuan' },
 							]}
+							warning={userData.jenisKelamin.warning}
 						/>
 						{/* Field Alamat */}
 						<TextArea
@@ -292,6 +330,7 @@ function App() {
 							maxLength='255'
 							value={userData.alamat.value}
 							inputLabel='Maksimal 255 karakter'
+							warning={userData.alamat.warning}
 						/>
 						{/* Field RT dan RW */}
 						<div className={styles.inlineForm}>
@@ -303,6 +342,7 @@ function App() {
 								onChange={handleUserInput}
 								value={userData.rt.value}
 								inline={true}
+								warning={userData.rt.warning}
 							></Input>
 							<Input
 								label='RW'
@@ -312,6 +352,7 @@ function App() {
 								onChange={handleUserInput}
 								value={userData.rw.value}
 								inline={true}
+								warning={userData.rw.warning}
 							/>
 						</div>
 						{/* Penghasilan Sebelum Pandemi */}
@@ -324,6 +365,7 @@ function App() {
 							value={userData.penghasilanBefore.value}
 							inputLabel='Rp. '
 							placeholder='Masukkan penghasilan sebelum pandemi'
+							warning={userData.penghasilanBefore.warning}
 						/>
 
 						{/* Penghasilan Sesudah Pandemi */}
@@ -336,12 +378,17 @@ function App() {
 							value={userData.penghasilanAfter.value}
 							inputLabel='Rp. '
 							placeholder='Masukkan penghasilan setelah pandemi'
+							touched={userData.penghasilanAfter.touched}
+							warning={userData.penghasilanAfter.warning}
 						/>
 
 						{/* Field Alasan */}
 						<div className={styles.formGroup}>
 							<label htmlFor='alasan'>Alasan membutuhkan bantuan</label>
-							<fieldset className={styles.radioGroup}>
+							<fieldset
+								className={styles.radioGroup}
+								style={userData.alasan.warning ? { border: '1px solid red' } : {}}
+							>
 								<div className={styles.groupItem}>
 									<input
 										id='alasan1'
@@ -393,6 +440,11 @@ function App() {
 									</div>
 								</div>
 							</fieldset>
+							{userData.alasan.warning ? (
+								<p style={{ color: 'red', padding: '0', margin: '0' }}>Data tidak boleh kosong</p>
+							) : (
+								''
+							)}
 						</div>
 
 						{/* Checkbox */}

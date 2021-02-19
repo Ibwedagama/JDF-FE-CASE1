@@ -12,6 +12,8 @@ const Input = ({
 	accept,
 	inputLabel,
 	inline = false,
+	warning = false,
+	limit = false,
 }) => {
 	return (
 		<div
@@ -28,8 +30,21 @@ const Input = ({
 					onChange={onChange}
 					placeholder={placeholder}
 					accept={accept}
+					style={warning ? { border: '1px solid red' } : {}}
 				/>
 				{inputLabel ? <p>{inputLabel}</p> : ''}
+				{warning ? (
+					<p style={{ color: 'red', padding: '0', margin: '0' }}>Data tidak boleh kosong</p>
+				) : (
+					''
+				)}
+				{limit ? (
+					<p style={{ color: 'red', padding: '0', margin: '0' }}>
+						Ukuran file tidak boleh lebih dari 2MB
+					</p>
+				) : (
+					''
+				)}
 			</div>
 		</div>
 	)

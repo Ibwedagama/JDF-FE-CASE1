@@ -10,6 +10,7 @@ const LabeledInput = ({
 	onChange,
 	placeholder,
 	inputLabel,
+	warning = false,
 }) => {
 	return (
 		<div className={styles.formGroup}>
@@ -23,7 +24,13 @@ const LabeledInput = ({
 					onChange={onChange}
 					value={value}
 					placeholder={placeholder}
+					style={warning ? { border: '1px solid red' } : {}}
 				/>
+				{warning ? (
+					<p style={{ color: 'red', padding: '0', margin: '0' }}>Data tidak boleh kosong</p>
+				) : (
+					''
+				)}
 			</div>
 		</div>
 	)
