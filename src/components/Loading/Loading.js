@@ -5,17 +5,15 @@ import Wrapper from '../Layout/Wrapper'
 const Loading = () => {
 	return (
 		<main>
-			<Wrapper>
-				<section className={styles.loading}>
-					<h1 className={styles.title}>Mengirim data, mohon tunggu</h1>
-					<div className={styles.ldsRing}>
-						<div></div>
-						<div></div>
-						<div></div>
-						<div></div>
-					</div>
-				</section>
-			</Wrapper>
+			<section className={styles.loading}>
+				<h1 className={styles.title}>Mengirim data, mohon tunggu</h1>
+				<div className={styles.ldsRing}>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+				</div>
+			</section>
 		</main>
 	)
 }
